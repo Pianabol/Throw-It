@@ -1,34 +1,61 @@
 using UnityEngine;
 
-public class LevelManager : MonoBehaviour
+public class LevelManager : MonoBehaviour, IGameStateListener
 {
     public static LevelManager Instance { get; private set; }
 
-    [Header("Level Prefabs")]
+    [Header(" Level Settings ")]
+    [Tooltip("Sırasıyla oynanacak level prefabları")]
     [SerializeField] private GameObject[] levelPrefabs;
-
-    [Header("Spawn Settings")]
-    [Tooltip("Masanın doğacağı tam koordinat/anchor")]
+    
+    [Tooltip("Levelların doğacağı Anchor/Pivot noktası")]
     [SerializeField] private Transform levelSpawnPoint;
 
+    private const string levelKey = "LevelReached";
+    private int levelIndex = 0;
     private GameObject currentLevelInstance;
-    private int currentLevelIndex = 0;
+
+    // UIManager'ın ekrana yazdırabilmesi için mevcut level numarası
+    public int CurrentLevelNum => levelIndex + 1;
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        LoadData();
     }
 
-    private void Start()
+    private void LoadData()
     {
-        currentLevelIndex = PlayerPrefs.GetInt("CurrentLevel", 0);
-        SpawnLevel();
+        levelIndex = PlayerPrefs.GetInt(levelKey, 0);
     }
 
-    public void SpawnLevel()
+    private void SaveData()
     {
-        // 1. Önceki seviyeden kalan masayı ve hedefleri temizle
+        PlayerPrefs.SetInt(levelKey, levelIndex);
+        PlayerPrefs.Save();
+    }
+
+    // Trafik Polisi (GameManager) durum değiştirdiğinde burası otomatik tetiklenir
+    public void GameStateChangedCallBack(EGameState gameState)
+    {
+        if (gameState == EGameState.GAME)
+        {
+            // Oyun başladığında leveli sahneye fırlat
+            SpawnLevel();
+        }
+        else if (gameState == EGameState.LEVELCOMPLETE)
+        {
+            // Level başarıyla bittiyse index'i artır ve cihaz hafızasına kaydet
+            levelIndex++;
+            SaveData();
+        }
+    }
+
+    private void SpawnLevel()
+    {
+        // Önceki seviyeden kalan masayı ve hedefleri temizle
         if (currentLevelInstance != null)
         {
             Destroy(currentLevelInstance);
@@ -40,39 +67,28 @@ public class LevelManager : MonoBehaviour
             return;
         }
 
-        // 2. Güvenli indeks (Son level geçilirse başa sar)
-        int safeIndex = currentLevelIndex % levelPrefabs.Length;
+        // Güvenli indeks (Son levele ulaşıldığında index'i sınırla)
+        int safeIndex = Mathf.Clamp(levelIndex, 0, levelPrefabs.Length - 1);
 
-        // 3. Level'ı tam belirlenen Anchor noktasında sahneye yarat
         Vector3 spawnPos = levelSpawnPoint != null ? levelSpawnPoint.position : Vector3.zero;
         Quaternion spawnRot = levelSpawnPoint != null ? levelSpawnPoint.rotation : Quaternion.identity;
 
+        // Leveli tam belirlenen noktada sahneye yarat
         currentLevelInstance = Instantiate(levelPrefabs[safeIndex], spawnPos, spawnRot);
 
-        // 4. Hedefleri GoalManager'a otomatik bildir/tetikle
-        InitGoalsForNewLevel();
-    }
-
-    private void InitGoalsForNewLevel()
-    {
-        // GoalManager yeni doğan hedefleri hemen bulsun
+        // Hedefleri GoalManager'a otomatik bildir
         if (GoalManager.Instance != null)
         {
-            // GoalManager'ın yeni doğan hedefleri sayması için metodunu tetikle
             GoalManager.Instance.ResetAndCountGoals();
         }
     }
 
-    public void NextLevel()
+    /// <summary>
+    /// GameManager, LEVELCOMPLETE sinyali geldiğinde bu metodu sorar.
+    /// Eğer true dönerse sinyali GAMEFINISHED olarak değiştirir.
+    /// </summary>
+    public bool IsGameFinished()
     {
-        currentLevelIndex++;
-        PlayerPrefs.SetInt("CurrentLevel", currentLevelIndex);
-        PlayerPrefs.Save();
-        SpawnLevel();
-    }
-
-    public void RestartLevel()
-    {
-        SpawnLevel();
+        return levelIndex >= levelPrefabs.Length - 1;
     }
 }
