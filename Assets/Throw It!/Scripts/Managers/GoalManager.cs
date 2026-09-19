@@ -8,8 +8,9 @@ public class GoalManager : MonoBehaviour
     public static event Action<int, int> OnGoalProgressChanged; // (Kalan, Toplam)
     public static event Action OnAllGoalsCompleted;
 
-    private int totalTargets;
-    private int remainingTargets;
+    private int totalTargets = 0;
+    private int remainingTargets = 0;
+    private bool isLevelCompleted = false;
 
     private void Awake()
     {
@@ -27,25 +28,42 @@ public class GoalManager : MonoBehaviour
         CanItem.OnCanKnockedDown -= HandleCanKnockedDown;
     }
 
-    private void Start()
+    /// <summary>
+    /// Sadece LevelManager yeni leveli sahneye koyduktan sonra çağrılacak!
+    /// </summary>
+    public void ResetAndCountGoals()
     {
-        // Sahnedeki tüm CanItem bileşenlerini otomatik bul ve say
-        CanItem[] targets = FindObjectsByType<CanItem>(FindObjectsSortMode.None);
+        isLevelCompleted = false;
+
+        // Sahnedeki hedefleri bul
+        CanItem[] targets = FindObjectsByType<CanItem>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        
         totalTargets = targets.Length;
         remainingTargets = totalTargets;
+
+        Debug.Log($"<color=cyan>[GOAL MANAGER]</color> Yeni Level Başlatıldı. Toplam Hedef: {totalTargets}");
 
         OnGoalProgressChanged?.Invoke(remainingTargets, totalTargets);
     }
 
     private void HandleCanKnockedDown()
     {
+        if (isLevelCompleted || totalTargets == 0) return;
+
         remainingTargets--;
+        Debug.Log($"<color=orange>[GOAL MANAGER]</color> Hedef Devrildi! Kalan Hedef: {remainingTargets} / {totalTargets}");
+
         OnGoalProgressChanged?.Invoke(remainingTargets, totalTargets);
 
-        if (remainingTargets <= 0)
+        // Ancak hedefler gerçekten sayılmışsa ve sıfıra indiyse bitir
+        if (remainingTargets <= 0 && totalTargets > 0)
         {
-            Debug.Log("🎉 TÜM HEDEFLER DEVRİLDİ! LEVEL COMPLETE!");
+            isLevelCompleted = true;
+            Debug.Log("<color=green>🎉 TÜM HEDEFLER DEVRİLDİ! LEVEL COMPLETE!</color>");
             OnAllGoalsCompleted?.Invoke();
         }
     }
+
+    public int GetRemainingTargets() => remainingTargets;
+    public int GetTotalTargets() => totalTargets;
 }

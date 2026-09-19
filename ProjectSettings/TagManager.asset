@@ -5,11 +5,12 @@ TagManager:
   serializedVersion: 3
   tags:
   - GoalTrigger
+  - DespawnWall
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Ball
   - Water
   - UI
   - 
