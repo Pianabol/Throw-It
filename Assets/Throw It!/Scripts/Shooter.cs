@@ -5,9 +5,8 @@ public class Shooter : MonoBehaviour
 {
     [Header(" References ")]
     [SerializeField] private Ball ballPrefab; 
-    
-    [Header(" Settings ")]
-    [SerializeField] private float throwForce = 15f; 
+
+    // throwForce silindi! Çünkü gücü artık Ball.cs kendi içinden (launchSpeed) alıyor.
 
     private ObjectPool<Ball> ballPool;
 
@@ -29,16 +28,13 @@ public class Shooter : MonoBehaviour
 
     private void Fire(Vector3 targetPoint)
     {
-        // 1. Atış yönünü hesapla (Shooter objesinden -> Tıklanan noktaya)
-        Vector3 throwDirection = (targetPoint - transform.position).normalized;
-
-        // 2. Havuzdan topu çek ve Shooter'ın tam olduğu noktaya koy
+        // 1. Havuzdan topu çek ve Shooter'ın tam olduğu noktaya koy
         Ball newBall = ballPool.Get();
         newBall.transform.position = transform.position;
         newBall.transform.rotation = Quaternion.identity;
 
-        // 3. Topu fırlat
-        newBall.Launch(throwDirection * throwForce);
+        // 2. TIKLANAN NOKTAYI DOĞRUDAN TOPA VER! (Yön hesabını Ball.cs kendisi yapacak)
+        newBall.Launch(targetPoint);
     }
 
     #region Pool Methods
