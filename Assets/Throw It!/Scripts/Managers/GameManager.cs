@@ -5,15 +5,26 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager instance;
+    public static GameManager Instance { get; private set; }
+
     private EGameState gameState;
-    
+
     private void Awake()
     {
-        if (instance == null) { instance = this; } 
-        else { Destroy(gameObject); }
+        if (Instance == null) 
+        { 
+            Instance = this; 
+        } 
+        else 
+        { 
+            Destroy(gameObject); 
+            return;
+        }
+
+        // Önceki oturumdan kalan LeanTween çöplerini sıfırlar
+        LeanTween.reset();
     }
-    
+
     private void Start()
     {
         SetGameState(EGameState.MENU);
@@ -21,46 +32,51 @@ public class GameManager : MonoBehaviour
 
     public void SetGameState(EGameState newState)
     {
-        // Trafik Polisi Müdahalesi: Eğer Level Bitti sinyali geldiyse, son level mi diye kontrol et
+        // Seviye bittiğinde son seviye kontrolü
         if (newState == EGameState.LEVELCOMPLETE)
         {
             if (LevelManager.Instance != null && LevelManager.Instance.IsGameFinished())
             {
-                newState = EGameState.GAMEFINISHED; // Sinyali final ekranına çevir
+                newState = EGameState.GAMEFINISHED;
             }
         }
 
         this.gameState = newState;
 
-        // Sahnedeki tüm dinleyicileri (UIManager, LevelManager vb.) bul ve onlara durumu bildir
+        // Sahnedeki tüm IGameStateListener arayüzünü dinleyenlere haber ver
         IEnumerable<IGameStateListener> gameStateListeners = 
-            FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+            FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None)
             .OfType<IGameStateListener>();
 
-        foreach (IGameStateListener dependency in gameStateListeners)
+        foreach (IGameStateListener listener in gameStateListeners)
         {
-            dependency.GameStateChangedCallBack(this.gameState);
+            listener.GameStateChangedCallBack(this.gameState);
         }
     }
+
+    // --- BUTON METOTLARI (Inspector'dan OnClick'e Bağlanacak) ---
 
     public void StartGame()
     {
         SetGameState(EGameState.GAME);
     }
-    
+
     public void NextButtonCallBack()
     {
-        SceneManager.LoadScene(0);
+        // Sahneyi yeniden yükle (LevelManager kaydedilen yeni seviyeyi açacaktır)
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void RetryButtonCallBack()
     {
-        SceneManager.LoadScene(0);
+        // Aynı sahneyi yeniden yükle
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
-    
-    public void RestartGameCallBack() 
+
+    public void HomeButtonCallBack()
     {
-        SceneManager.LoadScene(0);
+        // Ana menüye dönerken sahneyi sıfırdan açmak en temizidir
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public bool IsGame() => gameState == EGameState.GAME;

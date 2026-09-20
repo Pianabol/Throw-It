@@ -3,6 +3,34 @@ using System;
 
 public class InputManager : MonoBehaviour
 {
+
+    // Geçici olarak:
+
+    private void Start()
+{
+    Debug.Log($"[CAMERA TEST] Camera.main = {(Camera.main != null ? Camera.main.name : "NULL")}");
+
+    Ray centerRay = Camera.main.ViewportPointToRay(
+        new Vector3(0.5f, 0.5f, 0f)
+    );
+
+    Debug.Log(
+        $"[CENTER RAY] Origin: {centerRay.origin} | Direction: {centerRay.direction}"
+    );
+
+    if (Physics.Raycast(centerRay, out RaycastHit hit, 500f))
+    {
+        Debug.Log(
+            $"<color=green>[CENTER RAY HIT]</color> {hit.collider.name}"
+        );
+    }
+    else
+    {
+        Debug.LogError(
+            "<color=red>[CENTER RAY MISS]</color>"
+        );
+    }
+}
     // Artık Item göndermiyoruz; tıkladığımız yerin 3D uzaydaki tam noktasını (Vector3) yayınlıyoruz!
     public static Action<Vector3> onScreenTapped;
     
