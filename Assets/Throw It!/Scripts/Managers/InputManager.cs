@@ -3,41 +3,15 @@ using System;
 
 public class InputManager : MonoBehaviour
 {
-
-    // Geçici olarak:
-
-    private void Start()
-{
-    Debug.Log($"[CAMERA TEST] Camera.main = {(Camera.main != null ? Camera.main.name : "NULL")}");
-
-    Ray centerRay = Camera.main.ViewportPointToRay(
-        new Vector3(0.5f, 0.5f, 0f)
-    );
-
-    Debug.Log(
-        $"[CENTER RAY] Origin: {centerRay.origin} | Direction: {centerRay.direction}"
-    );
-
-    if (Physics.Raycast(centerRay, out RaycastHit hit, 500f))
-    {
-        Debug.Log(
-            $"<color=green>[CENTER RAY HIT]</color> {hit.collider.name}"
-        );
-    }
-    else
-    {
-        Debug.LogError(
-            "<color=red>[CENTER RAY MISS]</color>"
-        );
-    }
-}
     // Artık Item göndermiyoruz; tıkladığımız yerin 3D uzaydaki tam noktasını (Vector3) yayınlıyoruz!
     public static Action<Vector3> onScreenTapped;
     
     void Update()
     {
-        // İleride GameManager'ı kurduğumuzda buradaki yorum satırlarını açarsın
-        // if(GameManager.Instance != null && GameManager.Instance.IsGame())
+        // --- ZIRH AKTİF! ---
+        // Sadece ve sadece GameManager sahnede varsa ve durum GAME ise ekrana tıkla.
+        // Menüde, GameOver'da veya LevelComplete ekranında bu kod çalışmaz!
+        if(GameManager.Instance != null && GameManager.Instance.IsGame())
         {
             HandleControl();
         }
@@ -59,7 +33,6 @@ public class InputManager : MonoBehaviour
         // Lazerimiz ekrandaki herhangi bir şeye (Duvar, masa, teneke) çarptı mı? Menzili 100 yaptık ki yetişsin
         if (Physics.Raycast(ray, out RaycastHit hit, 100f))
         {
-            // DEDEKTİF LOGU: Neye tıkladığımızı Konsolda kabak gibi görüyoruz
             Debug.Log($"<color=yellow>[RAYCAST HEDEFİ]</color> Işın şuna çarptı: {hit.collider.gameObject.name} | Koordinat: {hit.point}");
 
             // Çarptığı noktanın tam koordinatını fırlatma mekanizmasına (Shooter) haber ver!

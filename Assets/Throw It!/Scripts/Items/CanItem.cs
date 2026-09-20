@@ -8,7 +8,7 @@ public class CanItem : MonoBehaviour
 
     [Header("Fall & Goal Settings")]
     [Tooltip("Masadan ne kadar aşağı düşerse hedef sayılacak?")]
-    [SerializeField] private float fallThresholdY = -2.5f; // Eşiği biraz daha aşağı çektik
+    [SerializeField] private float fallThresholdY = -2.5f; 
 
     [Header("Freeze Settings")]
     [Tooltip("Darbe alana kadar havada/yerinde sabit kalsın mı?")]
@@ -22,9 +22,12 @@ public class CanItem : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
 
+        // --- SİHİRLİ DOKUNUŞ BURADA ---
         if (freezeUntilHit)
         {
-            rb.isKinematic = true;
+            rb.isKinematic = false; // Fizikler açık, darbe alabilir!
+            rb.useGravity = false;  // Ama aşağı düşmez!
+            rb.Sleep();             // Darbe gelene kadar ufak sürtünmelerle havada kaymasını engeller.
         }
     }
 
@@ -50,7 +53,8 @@ public class CanItem : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (freezeUntilHit && rb.isKinematic)
+        // Darbeyi yediğinde yerçekimi hala kapalıysa, uyandır!
+        if (freezeUntilHit && !rb.useGravity)
         {
             WakeUpPhysics();
         }
@@ -58,16 +62,19 @@ public class CanItem : MonoBehaviour
 
     public void WakeUpPhysics()
     {
-        if (!rb.isKinematic) return;
+        // Zaten yerçekimi açıksa (uyanmışsa) tekrar işlem yapma
+        if (rb.useGravity) return; 
         
-        rb.isKinematic = false;
+        rb.useGravity = true; // Yerçekimini aç! Aşağı düşsün.
+        rb.WakeUp(); // Fizik motorunu dürt.
 
         Collider[] colliders = Physics.OverlapSphere(transform.position, wakeUpRadius);
         foreach (Collider col in colliders)
         {
             if (col.TryGetComponent(out CanItem neighborCan))
             {
-                if (neighborCan.rb != null && neighborCan.rb.isKinematic)
+                // Komşu teneke hala yerçekimsiz (donuk) ise onu da uyandır
+                if (neighborCan.rb != null && !neighborCan.rb.useGravity)
                 {
                     neighborCan.WakeUpPhysics();
                 }

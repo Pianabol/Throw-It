@@ -51,15 +51,17 @@ public class LevelManager : MonoBehaviour, IGameStateListener
             levelIndex++;
             SaveData();
         }
+        // --- SİHİRLİ DOKUNUŞ: Menüye dönüldüğünde masayı temizle! ---
+        else if (gameState == EGameState.MENU)
+        {
+            ClearLevel();
+        }
     }
 
     private void SpawnLevel()
     {
         // Önceki seviyeden kalan masayı ve hedefleri temizle
-        if (currentLevelInstance != null)
-        {
-            Destroy(currentLevelInstance);
-        }
+        ClearLevel();
 
         if (levelPrefabs == null || levelPrefabs.Length == 0)
         {
@@ -80,6 +82,16 @@ public class LevelManager : MonoBehaviour, IGameStateListener
         if (GoalManager.Instance != null)
         {
             GoalManager.Instance.ResetAndCountGoals();
+        }
+    }
+
+    // --- YENİ METOT: Prefabı siler ve referansı sıfırlar ---
+    private void ClearLevel()
+    {
+        if (currentLevelInstance != null)
+        {
+            Destroy(currentLevelInstance);
+            currentLevelInstance = null;
         }
     }
 
