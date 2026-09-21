@@ -4,7 +4,7 @@ A physics-based hyper-casual arcade game developed in Unity. The objective is si
 
 This project was built primarily to learn, practice, and solidify my understanding of scalable game architecture, physics optimization, and "game feel" elements in Unity. While heavily inspired by popular hyper-casual mechanics, the core focus was to build everything from scratch with a clean, AAA-standard approach.
 
-## 🎮 Gameplay Showcase
+##  Gameplay Showcase
 
 <div align="center">
   <a href="https://www.youtube.com/shorts/E4xOrgy2D5s">
@@ -14,7 +14,7 @@ This project was built primarily to learn, practice, and solidify my understandi
   <i>Click the image above to watch the full gameplay video on YouTube!</i>
 </div>
 
-## ⚙️ Technical Architecture & Features
+##  Technical Architecture & Features
 
 Rather than relying on quick fixes, this project was built using industry-standard patterns to ensure zero memory leaks, smooth 60 FPS performance, and a highly modular codebase.
 
@@ -24,13 +24,13 @@ Rather than relying on quick fixes, this project was built using industry-standa
 * **Observer Pattern Integration:** The `GoalManager` tracks target counts by directly querying spawned level prefabs, decoupling UI logic from the physics engine and eliminating "ghost target" bugs.
 * **Game Feel ("Juice"):** Fluid UI popups, seamless screen faders, and button animations are powered by `LeanTween`. The dynamic `SoundManager` uses pitch-randomization to ensure consecutive impacts sound organic and satisfying.
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 * **Engine:** Unity
 * **Language:** C#
 * **Architecture:** State Machine, Observer Pattern, Object Pooling, Data-Driven Level Management
 
-## 🎨 Credits & Assets
+##  Credits & Assets
 
 A huge thank you to the creators of the following free assets and tools that helped bring this practice project to life.
 

@@ -86,7 +86,7 @@ MemoryCaptures/
 ehthumbs.db
 Thumbs.db
 
-# Visual Studio / Kod Editörü Dosyaları
+
 *.csproj
 *.unityproj
 *.sln
@@ -106,7 +106,7 @@ Thumbs.db
 .slnx
 *.lscache
 
-# Unity3D generated meta files
+
 *.pidb.meta
 *.pdb.meta
 *.mdb.meta
