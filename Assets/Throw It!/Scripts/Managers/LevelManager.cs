@@ -37,21 +37,17 @@ public class LevelManager : MonoBehaviour, IGameStateListener
         PlayerPrefs.Save();
     }
 
-    // Trafik Polisi (GameManager) durum değiştirdiğinde burası otomatik tetiklenir
     public void GameStateChangedCallBack(EGameState gameState)
     {
         if (gameState == EGameState.GAME)
         {
-            // Oyun başladığında leveli sahneye fırlat
             SpawnLevel();
         }
         else if (gameState == EGameState.LEVELCOMPLETE)
         {
-            // Level başarıyla bittiyse index'i artır ve cihaz hafızasına kaydet
             levelIndex++;
             SaveData();
         }
-        // --- SİHİRLİ DOKUNUŞ: Menüye dönüldüğünde masayı temizle! ---
         else if (gameState == EGameState.MENU)
         {
             ClearLevel();
@@ -60,7 +56,6 @@ public class LevelManager : MonoBehaviour, IGameStateListener
 
     private void SpawnLevel()
     {
-        // Önceki seviyeden kalan masayı ve hedefleri temizle
         ClearLevel();
 
         if (levelPrefabs == null || levelPrefabs.Length == 0)
@@ -69,23 +64,24 @@ public class LevelManager : MonoBehaviour, IGameStateListener
             return;
         }
 
-        // Güvenli indeks (Son levele ulaşıldığında index'i sınırla)
         int safeIndex = Mathf.Clamp(levelIndex, 0, levelPrefabs.Length - 1);
 
         Vector3 spawnPos = levelSpawnPoint != null ? levelSpawnPoint.position : Vector3.zero;
         Quaternion spawnRot = levelSpawnPoint != null ? levelSpawnPoint.rotation : Quaternion.identity;
 
-        // Leveli tam belirlenen noktada sahneye yarat
+        // 1. Yeni leveli oluştur
         currentLevelInstance = Instantiate(levelPrefabs[safeIndex], spawnPos, spawnRot);
 
-        // Hedefleri GoalManager'a otomatik bildir
+        // 2. SADECE bu yeni levelin altındaki hedefleri say (Eski ölü şişeler asla karışamaz!)
+        CanItem[] targets = currentLevelInstance.GetComponentsInChildren<CanItem>();
+
+        // 3. GoalManager'a kesin hedef sayısını teslim et
         if (GoalManager.Instance != null)
         {
-            GoalManager.Instance.ResetAndCountGoals();
+            GoalManager.Instance.SetGoals(targets.Length);
         }
     }
 
-    // --- YENİ METOT: Prefabı siler ve referansı sıfırlar ---
     private void ClearLevel()
     {
         if (currentLevelInstance != null)
@@ -95,10 +91,6 @@ public class LevelManager : MonoBehaviour, IGameStateListener
         }
     }
 
-    /// <summary>
-    /// GameManager, LEVELCOMPLETE sinyali geldiğinde bu metodu sorar.
-    /// Eğer true dönerse sinyali GAMEFINISHED olarak değiştirir.
-    /// </summary>
     public bool IsGameFinished()
     {
         return levelIndex >= levelPrefabs.Length - 1;

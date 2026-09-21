@@ -67,6 +67,45 @@ ExportedObj/
 *.opendb
 *.VC.db
 
+# Unity Klasörleri (Asla GitHub'a gitmemeli)
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+MemoryCaptures/
+
+# Mac İşletim Sistemi Çöpleri
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Visual Studio / Kod Editörü Dosyaları
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+.vscode/
+.idea/
+.slnx
+*.lscache
+
 # Unity3D generated meta files
 *.pidb.meta
 *.pdb.meta

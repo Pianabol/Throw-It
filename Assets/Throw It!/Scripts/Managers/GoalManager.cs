@@ -29,19 +29,15 @@ public class GoalManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Sadece LevelManager yeni leveli sahneye koyduktan sonra çağrılacak!
+    /// LevelManager yeni leveli oluşturduğunda hedef sayısını doğrudan buraya gönderir.
     /// </summary>
-    public void ResetAndCountGoals()
+    public void SetGoals(int targetCount)
     {
         isLevelCompleted = false;
-
-        // Sahnedeki hedefleri bul
-        CanItem[] targets = FindObjectsByType<CanItem>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-        
-        totalTargets = targets.Length;
+        totalTargets = targetCount;
         remainingTargets = totalTargets;
 
-        Debug.Log($"<color=cyan>[GOAL MANAGER]</color> Yeni Level Başlatıldı. Toplam Hedef: {totalTargets}");
+        Debug.Log($"<color=cyan>[GOAL MANAGER]</color> Yeni Level Başlatıldı. Kesin Hedef: {totalTargets}");
 
         OnGoalProgressChanged?.Invoke(remainingTargets, totalTargets);
     }
@@ -55,7 +51,6 @@ public class GoalManager : MonoBehaviour
 
         OnGoalProgressChanged?.Invoke(remainingTargets, totalTargets);
 
-        // Ancak hedefler gerçekten sayılmışsa ve sıfıra indiyse bitir
         if (remainingTargets <= 0 && totalTargets > 0)
         {
             isLevelCompleted = true;

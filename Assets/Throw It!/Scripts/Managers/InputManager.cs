@@ -3,14 +3,10 @@ using System;
 
 public class InputManager : MonoBehaviour
 {
-    // Artık Item göndermiyoruz; tıkladığımız yerin 3D uzaydaki tam noktasını (Vector3) yayınlıyoruz!
     public static Action<Vector3> onScreenTapped;
     
     void Update()
     {
-        // --- ZIRH AKTİF! ---
-        // Sadece ve sadece GameManager sahnede varsa ve durum GAME ise ekrana tıkla.
-        // Menüde, GameOver'da veya LevelComplete ekranında bu kod çalışmaz!
         if(GameManager.Instance != null && GameManager.Instance.IsGame())
         {
             HandleControl();
@@ -19,7 +15,6 @@ public class InputManager : MonoBehaviour
     
     private void HandleControl()
     {
-        // Mobilde tek dokunuşu (Single Touch) sorunsuz algılar
         if (Input.GetMouseButtonDown(0))
         {
             HandleClick();
@@ -30,12 +25,16 @@ public class InputManager : MonoBehaviour
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         
-        // Lazerimiz ekrandaki herhangi bir şeye (Duvar, masa, teneke) çarptı mı? Menzili 100 yaptık ki yetişsin
         if (Physics.Raycast(ray, out RaycastHit hit, 100f))
         {
             Debug.Log($"<color=yellow>[RAYCAST HEDEFİ]</color> Işın şuna çarptı: {hit.collider.gameObject.name} | Koordinat: {hit.point}");
 
-            // Çarptığı noktanın tam koordinatını fırlatma mekanizmasına (Shooter) haber ver!
+            // --- SES TETİKLEYİCİSİ: ATEŞ ETME ---
+            if (SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlayShoot();
+            }
+
             onScreenTapped?.Invoke(hit.point);
         }
         else 

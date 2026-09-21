@@ -98,10 +98,17 @@ public class Ball : MonoBehaviour
     {
         if (isReturningToPool) return;
 
+        // Uçuruma veya yok etme duvarına çarptıysa sessizce havuza dön
         if (collision.gameObject.CompareTag("DespawnWall"))
         {
             ReturnToPool();
             return;
+        }
+
+        // --- SES TETİKLEYİCİSİ: TOP BİR YERE ÇARPTIĞINDA PATLAMA SESİ ÇAL ---
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayExplosion();
         }
 
         // --- YENİ: ÇARPMA ANINDA EFEKTİ PATLAT ---

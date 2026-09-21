@@ -188,6 +188,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CanItem
   fallThresholdY: -1
+  freezeUntilHit: 1
+  wakeUpRadius: 1.2
 --- !u!1 &1307486435842954566
 GameObject:
   m_ObjectHideFlags: 0
@@ -376,6 +378,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CanItem
   fallThresholdY: -1
+  freezeUntilHit: 1
+  wakeUpRadius: 1.2
 --- !u!1 &2239729699857575074
 GameObject:
   m_ObjectHideFlags: 0
@@ -840,6 +844,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CanItem
   fallThresholdY: -1
+  freezeUntilHit: 1
+  wakeUpRadius: 1.2
 --- !u!1 &6512878567772301217
 GameObject:
   m_ObjectHideFlags: 0
@@ -849,6 +855,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6604875810454988190}
+  - component: {fileID: -2534412094417205158}
   m_Layer: 0
   m_Name: Level_1
   m_TagString: Untagged
@@ -879,6 +886,19 @@ Transform:
   - {fileID: 7897596928876569067}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-2534412094417205158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6512878567772301217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 598d432b39b1d4cbf833aaf6c825cee8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Level
+  Duration: 25
 --- !u!1 &6595729570553795516
 GameObject:
   m_ObjectHideFlags: 0
@@ -975,6 +995,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CanItem
   fallThresholdY: -1
+  freezeUntilHit: 1
+  wakeUpRadius: 1.2
 --- !u!1 &7138969183028633420
 GameObject:
   m_ObjectHideFlags: 0
@@ -1163,6 +1185,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CanItem
   fallThresholdY: -1
+  freezeUntilHit: 1
+  wakeUpRadius: 1.2
 --- !u!1 &8487612845184536241
 GameObject:
   m_ObjectHideFlags: 0
@@ -1259,6 +1283,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CanItem
   fallThresholdY: -1
+  freezeUntilHit: 1
+  wakeUpRadius: 1.2
 --- !u!1 &8727970161975362842
 GameObject:
   m_ObjectHideFlags: 0
@@ -1355,6 +1381,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CanItem
   fallThresholdY: -1
+  freezeUntilHit: 1
+  wakeUpRadius: 1.2
 --- !u!1 &8841165719358008889
 GameObject:
   m_ObjectHideFlags: 0

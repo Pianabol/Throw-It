@@ -22,18 +22,16 @@ public class CanItem : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
 
-        // --- SİHİRLİ DOKUNUŞ BURADA ---
         if (freezeUntilHit)
         {
-            rb.isKinematic = false; // Fizikler açık, darbe alabilir!
-            rb.useGravity = false;  // Ama aşağı düşmez!
-            rb.Sleep();             // Darbe gelene kadar ufak sürtünmelerle havada kaymasını engeller.
+            rb.isKinematic = false;
+            rb.useGravity = false;
+            rb.Sleep(); 
         }
     }
 
     private void Update()
     {
-        // Güvenlik ağı: Trigger'ı ıskalayıp sahne dışına uçsa bile Y sınırını geçerse düşmüş say
         if (!isKnockedDown && transform.position.y < fallThresholdY)
         {
             KnockDown("Y Sınırı Aşımı (Uçuruma Düştü)");
@@ -44,7 +42,6 @@ public class CanItem : MonoBehaviour
     {
         if (isKnockedDown) return;
 
-        // ifIsGoal trigger kutusuna temas ettiği an
         if (other.CompareTag("GoalTrigger"))
         {
             KnockDown("ifIsGoal Trigger Bölgesine Temas Etti");
@@ -53,7 +50,6 @@ public class CanItem : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Darbeyi yediğinde yerçekimi hala kapalıysa, uyandır!
         if (freezeUntilHit && !rb.useGravity)
         {
             WakeUpPhysics();
@@ -62,18 +58,16 @@ public class CanItem : MonoBehaviour
 
     public void WakeUpPhysics()
     {
-        // Zaten yerçekimi açıksa (uyanmışsa) tekrar işlem yapma
         if (rb.useGravity) return; 
         
-        rb.useGravity = true; // Yerçekimini aç! Aşağı düşsün.
-        rb.WakeUp(); // Fizik motorunu dürt.
+        rb.useGravity = true; 
+        rb.WakeUp(); 
 
         Collider[] colliders = Physics.OverlapSphere(transform.position, wakeUpRadius);
         foreach (Collider col in colliders)
         {
             if (col.TryGetComponent(out CanItem neighborCan))
             {
-                // Komşu teneke hala yerçekimsiz (donuk) ise onu da uyandır
                 if (neighborCan.rb != null && !neighborCan.rb.useGravity)
                 {
                     neighborCan.WakeUpPhysics();
@@ -88,7 +82,20 @@ public class CanItem : MonoBehaviour
 
         isKnockedDown = true;
         
-        // DEDEKTİF LOGU: Hangi parçanın neden düştüğünü açıkça göreceğiz
+        // --- SES TETİKLEYİCİSİ: HEDEF DEVRİLME ---
+        if (SoundManager.Instance != null)
+        {
+            // İsminde "Cylin" veya etiketinde "TinTarget" varsa teneke sesi, yoksa ahşap sesi çalar
+            if (gameObject.name.Contains("Cylin") || CompareTag("TinTarget"))
+            {
+                SoundManager.Instance.PlayTinHit();
+            }
+            else
+            {
+                SoundManager.Instance.PlayWoodHit();
+            }
+        }
+
         Debug.Log($"<color=yellow>[HEDEF DÜŞTÜ]</color> Yere Düşen Item: <b>{gameObject.name}</b> | Neden: {sebep}");
 
         OnCanKnockedDown?.Invoke();
